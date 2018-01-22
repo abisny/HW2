@@ -12,6 +12,7 @@
 ##### IMPORT STATEMENTS #####
 #############################
 
+import requests, json
 from flask import Flask, request, render_template, url_for, flash, redirect
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, RadioField, ValidationError
@@ -45,6 +46,26 @@ def hello_world():
 @app.route('/user/<name>')
 def hello_user(name):
     return '<h1>Hello {0}</h1>'.format(name)
+
+@app.route('/artistform')
+def artist_form():
+    return render_template('artistform.html')
+
+@app.route('/artistinfo')
+def artist_info():
+    r = requests.get('https://itunes.apple.com/search?term=' + request.args['artist']).text
+    objects = json.loads(r)['results']
+    return render_template('artist_info.html', objects=objects)
+
+@app.route('/artistlinks')
+def artist_links():
+    return render_template('artist_links.html')
+
+@app.route('/specific/song/<artist_name>')
+def specific_song(artist_name):
+    r = requests.get('https://itunes.apple.com/search?term=' + artist_name).text
+    results = json.loads(r)['results']
+    return render_template('specific_artist.html', results=results)
 
 @app.route('/album_entry')
 def view_album_entry():
