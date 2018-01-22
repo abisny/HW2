@@ -12,13 +12,7 @@
 ##### IMPORT STATEMENTS #####
 #############################
 
-from flask import Flask, request, render_template
-<<<<<<< HEAD
-import FlaskForm
-from wtforms import StringField, SubmitField, RadioField, ValidationError
-from wtforms.validators import Required
-
-=======
+from flask import Flask, request, render_template, url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, RadioField, ValidationError
 from wtforms.validators import Required
@@ -27,7 +21,6 @@ from wtforms.validators import Required
 ##### APP SETUP #####
 #####################
 
->>>>>>> a6eb0a1... Add structure and import stmts necessary
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hardtoguessstring'
 
@@ -51,6 +44,23 @@ def hello_world():
 def hello_user(name):
     return '<h1>Hello {0}<h1>'.format(name)
 
+class AlbumEntryForm(FlaskForm):
+    album_name = StringField('Enter the name of an album', validators=[ Required() ])
+    rating = RadioField('How much do you like this item? (1 low, 3 high)', [1, 2, 3], validators=[ Required() ])
+    submit = SubmitField('Submit')
+
+@app.route('/album_entry')
+def view_album_entry():
+    form_var = AlbumEntryForm()
+    return render_template('album_entry.html', form=form_var)
+
+@app.route('/album_result')
+def view_results():
+    form_var = AlbumEntryForm(request.form)
+    if request.method == 'GET' and form_var.validate_on_submit():
+        album_name = form_var.album_name.data
+        rating = form_var.rating.data
+        return render_template('album_data.html', album_name=album_name, rating=rating)
 
 if __name__ == '__main__':
     app.run(use_reloader=True,debug=True)

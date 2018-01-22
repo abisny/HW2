@@ -1,0 +1,9 @@
+{{% block content %}}
+<h1> Album Entry Form </h1>
+<form method='GET' action='/album_result'>
+  {{ form.hidden_tag() }}
+  <p>{{ form.album_name.lablel }}{{ form.album_name() }}</p>
+  <p>{{ form.rating.label }}{{ form.rating() }}</p>
+  {{ form.submit() }}
+</form>
+{{% end block %}}
