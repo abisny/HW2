@@ -28,8 +28,10 @@ app.config['SECRET_KEY'] = 'hardtoguessstring'
 ###### FORMS #######
 ####################
 
-
-
+class AlbumEntryForm(FlaskForm):
+    album_name = StringField('Enter the name of an album', validators=[ Required() ])
+    rating = RadioField('How much do you like this item? (1 low, 3 high)', choices=[(1, '1'), (2, '2'), (3, '3')], validators=[ Required() ])
+    submit = SubmitField('Submit')
 
 ####################
 ###### ROUTES ######
@@ -42,25 +44,22 @@ def hello_world():
 
 @app.route('/user/<name>')
 def hello_user(name):
-    return '<h1>Hello {0}<h1>'.format(name)
-
-class AlbumEntryForm(FlaskForm):
-    album_name = StringField('Enter the name of an album', validators=[ Required() ])
-    rating = RadioField('How much do you like this item? (1 low, 3 high)', [1, 2, 3], validators=[ Required() ])
-    submit = SubmitField('Submit')
+    return '<h1>Hello {0}</h1>'.format(name)
 
 @app.route('/album_entry')
 def view_album_entry():
     form_var = AlbumEntryForm()
     return render_template('album_entry.html', form=form_var)
 
-@app.route('/album_result')
+@app.route('/album_result', methods=['GET','POST'])
 def view_results():
     form_var = AlbumEntryForm(request.form)
     if request.method == 'GET' and form_var.validate_on_submit():
         album_name = form_var.album_name.data
         rating = form_var.rating.data
         return render_template('album_data.html', album_name=album_name, rating=rating)
+    flash('All fields are required!')
+    return redirect(url_for('view_album_entry'))
 
 if __name__ == '__main__':
     app.run(use_reloader=True,debug=True)
