@@ -12,7 +12,7 @@
 ##### IMPORT STATEMENTS #####
 #############################
 
-from flask import Flask, request, render_template, url_for
+from flask import Flask, request, render_template, url_for, flash, redirect
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, RadioField, ValidationError
 from wtforms.validators import Required
@@ -54,7 +54,7 @@ def view_album_entry():
 @app.route('/album_result', methods=['GET','POST'])
 def view_results():
     form_var = AlbumEntryForm(request.form)
-    if request.method == 'GET' and form_var.validate_on_submit():
+    if request.method == 'POST' and form_var.validate_on_submit:
         album_name = form_var.album_name.data
         rating = form_var.rating.data
         return render_template('album_data.html', album_name=album_name, rating=rating)
